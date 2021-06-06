@@ -13,12 +13,12 @@ def print_sizes(root):
     n_ind = s_ind = 0
     for name in sorted(os.listdir(root)):
         path = os.path.join(root, name)
-        if not os.path.isdir(path):
-            continue
-
         state[0] = 0
-        for root2, dirs, files in os.walk(path, topdown=False):
-            get_size(state, root2, files + dirs)
+        if not os.path.isdir(path):
+            state[0] = os.stat(path).st_size
+        else:
+            for root2, dirs, files in os.walk(path, topdown=False):
+                get_size(state, root2, files + dirs)
         total += state[0]
         s_size = size_string(state[0])
         n_ind = max(n_ind, len(name), 5)
@@ -51,5 +51,5 @@ def size_string(size):
         str_size = str(size) + "Bytes"
     return str_size
 
-path = input("path: ")
+path = input("path: ") or "."
 print_sizes(path)
